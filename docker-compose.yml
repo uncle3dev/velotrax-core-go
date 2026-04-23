@@ -1,0 +1,17 @@
+services:
+  core:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: velotrax-core
+    ports:
+      - "50052:50052"
+    env_file:
+      - .env
+    networks:
+      - velotrax-net
+
+networks:
+  velotrax-net:
+    external: true
+    name: velotrax-net
