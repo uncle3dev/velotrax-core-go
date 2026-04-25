@@ -20,6 +20,7 @@ type User struct {
 	PasswordHash string          `bson:"password"             json:"-"`
 	Active       bool            `bson:"active"               json:"active"`
 	Roles        []string        `bson:"roles"                json:"roles"`
+	Email        string          `bson:"email"                json:"email"`
 	OrderIDs     []bson.ObjectID `bson:"order_ids,omitempty"  json:"orderIds,omitempty"`
 	CreatedAt    time.Time       `bson:"created_at"           json:"createdAt"`
 	UpdatedAt    time.Time       `bson:"updated_at"           json:"updatedAt"`

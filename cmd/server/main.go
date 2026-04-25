@@ -52,13 +52,17 @@ func main() {
 		logger.Fatal("Failed to ensure MongoDB indexes", zap.Error(err))
 	}
 
+	if err := db.EnsureSeed(context.Background(), mongoDB.Database); err != nil {
+		logger.Error("Mongo seed failed", zap.Error(err))
+	}
+
 	grpcListener, err := net.Listen("tcp", fmt.Sprintf(":%d", cfg.GRPCPort))
 	if err != nil {
 		logger.Fatal("Failed to listen on gRPC port", zap.Error(err))
 	}
 
 	grpcSrv := grpc.NewServer()
-	orderpb.RegisterOrderServiceServer(grpcSrv, orderService.NewService(logger, cfg.JWTSecret))
+	orderpb.RegisterOrderServiceServer(grpcSrv, orderService.NewService(logger, cfg.JWTSecret, orderService.NewMongoRepository(mongoDB.Database)))
 
 	go func() {
 		logger.Info("gRPC server listening", zap.String("addr", grpcListener.Addr().String()))

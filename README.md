@@ -2,10 +2,15 @@
 
 `velotrax-core-go` là service lõi cho phần đơn hàng của hệ thống Velotrax. Repo này hiện chạy một gRPC server `OrderService` trên cổng `50052`, khởi tạo kết nối MongoDB, và tự tạo index khi khởi động.
 
-Hiện tại các RPC trong service vẫn là dữ liệu demo/stub:
+Hiện tại service có các RPC:
 - `ListOrders`
 - `GetOrder`
 - `GetOrderTracking`
+- `CreateOrder`
+- `UpdateOrder`
+
+Server lúc khởi động sẽ chạy bước seed mock data vào Mongo một lần theo version. Nếu version đó đã có trong collection seed thì server vẫn chạy tiếp và bỏ qua seed.
+Hiện seed đang nạp 3 mock users (`ADMIN`, `FREE_USER`, `SHIPPER`) và 10 mock orders.
 
 ## Tech Stack
 
@@ -27,6 +32,7 @@ Hiện tại các RPC trong service vẫn là dữ liệu demo/stub:
 - `internal/gen/order/`: code sinh từ protobuf, không sửa tay
 - `proto/order/order.proto`: source of truth cho contract gRPC
 - `scripts/gen_proto.sh`: script generate lại code protobuf
+- `internal/db/seed.go`: startup seeder idempotent cho mock data
 - `internal/router/router.go`: scaffold HTTP router, hiện chưa được gọi từ `main.go`
 
 ## Chạy Local
@@ -90,6 +96,7 @@ Code sinh ra sẽ được đặt trong `internal/gen/order/`. Không chỉnh ta
 ## Lưu Ý Quan Trọng
 
 - Service hiện xác thực JWT ngay trong `internal/service/order/service.go` bằng metadata `authorization: Bearer <token>`.
-- `ListOrders` hiện trả dữ liệu hard-code, không query DB.
-- `GetOrder` và `GetOrderTracking` cũng đang là dữ liệu mẫu.
+- `CreateOrder` và `UpdateOrder` chỉ cho role `ADMIN`.
+- `ListOrders`, `GetOrder`, và `GetOrderTracking` đọc từ Mongo dựa trên mock seed.
+- `ADMIN` xem được tất cả order; user thường chỉ xem order của chính mình.
 - HTTP `/health` có scaffold trong `internal/router/router.go`, nhưng chưa được gắn vào entrypoint hiện tại.
