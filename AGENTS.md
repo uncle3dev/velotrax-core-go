@@ -34,7 +34,8 @@ Tài liệu ngắn cho người làm tiếp theo trong repo `velotrax-core-go`.
 ## Luồng Auth / Data / Route
 
 - Auth hiện nằm trong `internal/service/order/service.go` qua JWT ở metadata gRPC `authorization: Bearer <token>`.
-- `ListOrders`, `GetOrder`, `GetOrderTracking` hiện là stub/demo data, chưa query MongoDB.
+- `ListOrders`, `GetOrder`, `GetOrderTracking` hiện query MongoDB; `ADMIN` xem được mọi order, user thường chỉ xem order của chính mình.
+- Mock data hiện được nạp qua startup seeder trong `internal/db/seed.go`, theo version marker để skip nếu đã chạy.
 - HTTP router trong `internal/router/router.go` chỉ là scaffold; `main.go` hiện chỉ start gRPC server.
 
 ## Khi Đổi Proto
@@ -43,6 +44,12 @@ Tài liệu ngắn cho người làm tiếp theo trong repo `velotrax-core-go`.
 2. Chạy `make proto`
 3. Kiểm tra lại `internal/gen/order/`
 4. Đồng bộ README nếu contract public thay đổi
+
+## Khi Đổi Seed/Mock Data
+
+- `internal/db/seed.go` là nơi seed mock data startup hiện tại
+- Seed là idempotent theo version marker, nên tăng version khi thay bộ dữ liệu mẫu
+- Đồng bộ README nếu số lượng/mẫu dữ liệu public thay đổi
 
 ## Khi Đổi Config
 
